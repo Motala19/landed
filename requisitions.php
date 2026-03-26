@@ -1,0 +1,148 @@
+<?php 
+session_start();
+
+$userName = "Motala Godfrey";
+$currentDate = date("l, d F Y");
+$currentTime = date("H:i:s");
+
+$requisitions = [
+    [
+        'number' => 'REQ-001',
+        'title' => 'Sports Equipment',
+        'department' => 'Sports',
+        'status' => 'Pending Principal',
+        'date' => '2026-03-20',
+        'created_by' => 'Motala Godfrey'
+    ],
+    [
+        'number' => 'REQ-002',
+        'title' => 'Math Textbooks',
+        'department' => 'Academics',
+        'status' => 'Approved',
+        'date' => '2026-03-18',
+        'created_by' => 'Motala Godfrey'
+    ],
+    [
+        'number' => 'REQ-003',
+        'title' => 'Football Kit',
+        'department' => 'Sports',
+        'status' => 'Rejected',
+        'date' => '2026-03-19',
+        'created_by' => 'Motala Godfrey'
+    ]
+];
+
+function badgeClass($status) {
+    return match ($status) {
+        'Approved' => 'bg-success-subtle text-success',
+        'Rejected' => 'bg-danger-subtle text-danger',
+        'Pending Principal' => 'bg-warning-subtle text-warning',
+        default => 'bg-secondary'
+    };
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Requisitions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+<div class="container-fluid">
+<div class="row">
+
+<?php include 'includes/sidebar.php'; ?>
+
+<div class="col-lg-10 p-4">
+
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h3>Requisitions</h3>
+        <small><?php echo $currentDate . " | " . $currentTime; ?></small>
+    </div>
+
+    <!-- USER INFO + BUTTON -->
+    <div class="text-end">
+        <div><strong><?php echo $userName; ?></strong></div>
+        <small class="text-muted">Staff</small>
+        <br>
+        <a href="create_requisition.php">
+        <button class="btn btn-primary mt-2">
+            + Create Requisition
+        </button>
+        </a>
+    </div>
+
+</div>
+
+<!-- SEARCH / FILTER -->
+<div class="card-box mb-3">
+    <input type="text" class="form-control" placeholder="Search requisitions...">
+</div>
+
+<!-- TABLE -->
+<div class="card-box">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Department</th>
+                <th>Date</th>
+                <th>Created By</th> <!-- ✅ NEW -->
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <?php foreach($requisitions as $r): ?>
+            <tr>
+                <td><?php echo $r['number']; ?></td>
+                <td><?php echo $r['title']; ?></td>
+                <td><?php echo $r['department']; ?></td>
+                <td><?php echo $r['date']; ?></td>
+                <td><?php echo $r['created_by']; ?></td> <!-- ✅ NEW -->
+                <td>
+                    <span class="badge <?php echo badgeClass($r['status']); ?>">
+                        <?php echo $r['status']; ?>
+                    </span>
+                </td>
+                <td>
+                    <?php if($r['status'] == 'Pending Principal' || $r['status'] == 'Rejected'): ?>
+                        <button class="btn btn-sm btn-edit">View</button>
+                        <button class="btn btn-sm btn-edit">Edit</button>
+                        <button class="btn btn-sm btn-edit">Delete</button>
+                    <?php else: ?>
+                        <span class="text-muted">Locked</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+</div>
+</div>
+</div>
+
+<style>
+.btn-edit {
+    background: #1F3A5F;
+    color: white;
+    border: none;
+    margin-right: 5px;
+}
+.btn-edit:hover {
+    background: #7A1F2B;
+}
+</style>
+
+</body>
+</html>
