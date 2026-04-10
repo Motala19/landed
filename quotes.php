@@ -50,7 +50,11 @@ function badgeClass($status) {
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <div>
+<<<<<<< HEAD
         <h3>My Quotes</h3>
+=======
+        <h3>Quotes</h3>
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
         <small><?php echo $currentDate . " | " . $currentTime; ?></small>
     </div>
 
@@ -92,8 +96,12 @@ function badgeClass($status) {
                 </td>
                 <td>
                     <?php if($q['status'] == 'Pending Principal' || $q['status'] == 'Rejected'): ?>
+<<<<<<< HEAD
                         <button class="btn btn-sm btn-edit">Re-upload</button>
                         <button class="btn btn-sm btn-edits">Delete</button>
+=======
+                        <button class="btn btn-sm btn-edit">Replace</button>
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
                     <?php else: ?>
                         <span class="text-muted">Locked</span>
                     <?php endif; ?>

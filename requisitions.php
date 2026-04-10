@@ -1,7 +1,10 @@
 <?php 
+<<<<<<< HEAD
 include 'includes/db.php';
 
 $result = $conn->query("SELECT * FROM requisitions ORDER BY created_at DESC");
+=======
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
 session_start();
 
 $userName = "Motala Godfrey";
@@ -63,10 +66,16 @@ function badgeClass($status) {
 
 <!-- HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-4">
+<<<<<<< HEAD
     
 
     <div>
         <h3>My Requisitions</h3>
+=======
+
+    <div>
+        <h3>Requisitions</h3>
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
         <small><?php echo $currentDate . " | " . $currentTime; ?></small>
     </div>
 
@@ -74,7 +83,11 @@ function badgeClass($status) {
     <div class="text-end">
         <div><strong><?php echo $userName; ?></strong></div>
         <small class="text-muted">Staff</small>
+<<<<<<< HEAD
         <br><br>
+=======
+        <br>
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
         <a href="create_requisition.php">
         <button class="btn btn-primary mt-2">
             + Create Requisition
@@ -86,7 +99,11 @@ function badgeClass($status) {
 
 <!-- SEARCH / FILTER -->
 <div class="card-box mb-3">
+<<<<<<< HEAD
     <input style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px;" type="text" class="form-control" placeholder="Search requisitions...">
+=======
+    <input type="text" class="form-control" placeholder="Search requisitions...">
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
 </div>
 
 <!-- TABLE -->
@@ -105,6 +122,7 @@ function badgeClass($status) {
         </thead>
 
         <tbody>
+<<<<<<< HEAD
             <?php while($r = $result->fetch_assoc()): ?>
 <tr>
     <td>
@@ -140,6 +158,31 @@ function badgeClass($status) {
 </td>
 </tr>
 <?php endwhile; ?>
+=======
+            <?php foreach($requisitions as $r): ?>
+            <tr>
+                <td><?php echo $r['number']; ?></td>
+                <td><?php echo $r['title']; ?></td>
+                <td><?php echo $r['department']; ?></td>
+                <td><?php echo $r['date']; ?></td>
+                <td><?php echo $r['created_by']; ?></td> <!-- ✅ NEW -->
+                <td>
+                    <span class="badge <?php echo badgeClass($r['status']); ?>">
+                        <?php echo $r['status']; ?>
+                    </span>
+                </td>
+                <td>
+                    <?php if($r['status'] == 'Pending Principal' || $r['status'] == 'Rejected'): ?>
+                        <button class="btn btn-sm btn-edit">View</button>
+                        <button class="btn btn-sm btn-edit">Edit</button>
+                        <button class="btn btn-sm btn-edit">Delete</button>
+                    <?php else: ?>
+                        <span class="text-muted">Locked</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
         </tbody>
     </table>
 </div>

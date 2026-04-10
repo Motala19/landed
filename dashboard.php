@@ -90,8 +90,11 @@ function badgeClass($status) {
         <div class="brand-box text-center">
     <img src="assets/images/logo.png" alt="School Logo" class="brand-logo">
 
+<<<<<<< HEAD
     
 
+=======
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
     <div class="brand-title mt-2">Midrand Primary</div>
     <div class="brand-subtitle">Requisition System</div><br>
 </div>
@@ -101,7 +104,10 @@ function badgeClass($status) {
             <a href="requisitions.php" class="nav-link">Requisitions</a>
             <a href="quotes.php" class="nav-link">Quotes</a>
             <a href="#" class="nav-link">Finance</a>
+<<<<<<< HEAD
             <a href="#" class="nav-link">Logout</a>
+=======
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
         </nav>
     </aside>
 </div>

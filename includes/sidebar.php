@@ -12,7 +12,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <li class="nav-item mb-2">
             <a href="requisitions.php" 
                class="nav-link <?php echo ($currentPage == 'requisitions.php') ? 'active' : ''; ?>">
+<<<<<<< HEAD
                 My Requisitions
+=======
+                Requisitions
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
             </a>
         </li>
 
@@ -20,7 +24,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <li class="nav-item mb-2">
             <a href="quotes.php" 
                class="nav-link <?php echo ($currentPage == 'quotes.php') ? 'active' : ''; ?>">
+<<<<<<< HEAD
                My Quotes
+=======
+                Quotes
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
             </a>
         </li>
 
