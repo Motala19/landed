@@ -1,5 +1,13 @@
-<?php 
+<?php
 session_start();
+
+// 🚫 Prevent browser caching (VERY IMPORTANT)
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+ 
+
+
 $userName = "Finance User";
 
 // Dummy pre-filled data from staff requisition
@@ -9,6 +17,10 @@ $id = $_GET['id'] ?? 0;
 
 $result = $conn->query("SELECT * FROM requisitions WHERE id = $id");
 $requisition = $result->fetch_assoc();
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +37,7 @@ $requisition = $result->fetch_assoc();
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a href="finance-requisitions.php" class="btn btn-secondary mb-2">← Back</a>
+            <a href="finance-dashboard.php" class="btn btn-secondary mb-2">← Back</a>
             <h3>Finance Verification</h3>
         </div>
 
@@ -92,11 +104,12 @@ $requisition = $result->fetch_assoc();
             <!-- EXPENSE WITHIN BUDGET -->
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Expense Within the Approved Budget?</strong></label>
-                <select class="form-control" required>
-                    <option value="">-- Select Option --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
+                
+                <select name="budget_check" class="form-control" required>
+                <option value="">-- Select Budget Status --</option>
+                <option value="Yes">Yes</option>
+             <option value="No">No</option>
+</select>
             </div>
 
             <!-- SUPPORTING DOCUMENT -->

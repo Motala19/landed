@@ -99,7 +99,7 @@ $userName = "Motala Godfrey";
         <!-- DISCLAIMER -->
         <div class="alert alert-warning mt-3">
            By clicking submit, you confirm that the information provided is true and correct, and you acknowledge responsibility for this requisition.
-        </di v>
+        </div>
 
         <!-- BUTTONS -->
         <div class="d-flex justify-content-end mt-3">

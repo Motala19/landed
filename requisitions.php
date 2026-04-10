@@ -1,39 +1,15 @@
 <?php 
+session_start();
 include 'includes/db.php';
 
 $result = $conn->query("SELECT * FROM requisitions ORDER BY created_at DESC");
-session_start();
+
 
 $userName = "Motala Godfrey";
 $currentDate = date("l, d F Y");
 $currentTime = date("H:i:s");
 
-$requisitions = [
-    [
-        'number' => 'REQ-001',
-        'title' => 'Sports Equipment',
-        'department' => 'Sports',
-        'status' => 'Pending Principal',
-        'date' => '2026-03-20',
-        'created_by' => 'Motala Godfrey'
-    ],
-    [
-        'number' => 'REQ-002',
-        'title' => 'Math Textbooks',
-        'department' => 'Academics',
-        'status' => 'Approved',
-        'date' => '2026-03-18',
-        'created_by' => 'Motala Godfrey'
-    ],
-    [
-        'number' => 'REQ-003',
-        'title' => 'Football Kit',
-        'department' => 'Sports',
-        'status' => 'Rejected',
-        'date' => '2026-03-19',
-        'created_by' => 'Motala Godfrey'
-    ]
-];
+
 
 function badgeClass($status) {
     return match ($status) {

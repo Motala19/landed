@@ -53,7 +53,7 @@ try {
     $sql = "INSERT INTO requisitions 
 (requisition_number, title, department, amount, payment_type, payable_to, description, document, created_by, status)
 VALUES 
-('$reqNumber', '$title', '$department', '$amount', '$payment_type', '$payable_to', '$description', '$documentName', '$userName', 'New')";
+('$reqNumber', '$title', '$department', '$amount', '$payment_type', '$payable_to', '$description', '$documentName', '$userName', 'Pending')";
 
     $conn->query($sql);
 
