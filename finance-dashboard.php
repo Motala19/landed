@@ -203,7 +203,7 @@ $currentTime = date("H:i:s");
                     <td><?php echo $r['created_by']; ?></td>
 
                     <td>
-                        <a href="finance-verification.php?id=<?php echo $r['id']; ?>" class="btn btn-sm btn-primary">
+                        <a href="finance-view-requisition.php?id=<?php echo $r['id']; ?>" class="btn btn-sm btn-primary">
                             View
                         </a>
                     </td>
