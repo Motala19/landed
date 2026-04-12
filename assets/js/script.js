@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Requisition system loaded successfully.");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 690686211b371f09f123f2c50ef3abae6750df65
 });
 
 
@@ -15,6 +19,7 @@ document.querySelectorAll('.dashboard-card').forEach(card => {
         this.classList.add('active-card');
     });
 });
+<<<<<<< HEAD
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -40,3 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+=======
+=======
+});
+>>>>>>> 7ab4caea6570dc3165596da215d94ef01da59283
+>>>>>>> 690686211b371f09f123f2c50ef3abae6750df65
