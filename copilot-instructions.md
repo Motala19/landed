@@ -57,7 +57,7 @@ landed/
 Valid requisition/quote statuses (used in badges and filtering):
 - `'Approved'` → green (`bg-success-subtle`)
 - `'Rejected'` → red (`bg-danger-subtle`)
-- `'Pending Principal'` → yellow/warning (`bg-warning-subtle`)
+- `'pending'` → yellow/warning (`bg-warning-subtle`)
 - Default status → secondary (`bg-secondary`)
 
 Status display uses `badgeClass()` helper function that returns Bootstrap utility classes.

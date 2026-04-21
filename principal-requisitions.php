@@ -1,7 +1,7 @@
 <?php
 include 'includes/db.php';
 
-$result = $conn->query("SELECT * FROM requisitions WHERE status='Pending Principal' ORDER BY id DESC");
+$result = $conn->query("SELECT * FROM requisitions WHERE status='pending' ORDER BY id DESC");
 ?>
 
 <table class="table">

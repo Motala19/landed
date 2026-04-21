@@ -2,28 +2,7 @@
 session_start();
 $userName = "Finance User";
 
-$requisitions = [
-    [
-        'number' => 'REQ-001',
-        'title' => 'Sports Equipment',
-        'department' => 'Sports',
-        'amount' => 5000,
-        'budget' => 'Yes',
-        'created_by' => 'Motala Godfrey',
-        'date' => '2026-03-20',
-        'status' => 'Pending Finance'
-    ],
-    [
-        'number' => 'REQ-002',
-        'title' => 'Math Textbooks',
-        'department' => 'Academics',
-        'amount' => 3500,
-        'budget' => 'Yes',
-        'created_by' => 'John Doe',
-        'date' => '2026-03-18',
-        'status' => 'Pending Finance'
-    ]
-];
+
 
 function badgeClass($status) {
     return match ($status) {

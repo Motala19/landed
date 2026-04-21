@@ -2,6 +2,8 @@
 include 'includes/db.php';
 
 $id           = $_POST['id'];
+$action       = $_POST['action'] ?? 'update'; // 🔥 NEW
+
 $title        = $_POST['title'];
 $department   = $_POST['department'];
 $amount       = $_POST['amount'];
@@ -35,6 +37,19 @@ if (!empty($_FILES['document']['name'])) {
 }
 
 $conn->query($sql);
+
+
+// 🔥 RESUBMIT LOGIC (THIS IS THE MAGIC)
+if ($action == 'resubmit') {
+
+    $conn->query("UPDATE requisitions SET
+        status='new',
+        rejection_reason=NULL,
+        action_by='Staff'
+    WHERE id=$id");
+
+}
+
 
 header("Location: requisitions.php");
 exit;

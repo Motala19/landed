@@ -8,7 +8,7 @@ $currentTime = date("H:i:s");
 $quotes = [
     [
         'document' => 'Sports Equipment Quote 1.pdf',
-        'status' => 'Pending Principal',
+        'status' => 'pending',
         'date' => '2026-03-20',
         'created_by' => 'Motala Godfrey'
     ],
@@ -24,7 +24,7 @@ function badgeClass($status) {
     return match ($status) {
         'Approved' => 'bg-success-subtle text-success',
         'Rejected' => 'bg-danger-subtle text-danger',
-        'Pending Principal' => 'bg-warning-subtle text-warning',
+        'pending' => 'bg-warning-subtle text-warning',
         default => 'bg-secondary'
     };
 }
@@ -91,7 +91,7 @@ function badgeClass($status) {
                     </span>
                 </td>
                 <td>
-                    <?php if($q['status'] == 'Pending Principal' || $q['status'] == 'Rejected'): ?>
+                    <?php if($q['status'] == 'pending' || $q['status'] == 'Rejected'): ?>
                         <button class="btn btn-sm btn-edit">Re-upload</button>
                         <button class="btn btn-sm btn-edits">Delete</button>
                     <?php else: ?>

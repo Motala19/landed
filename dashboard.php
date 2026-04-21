@@ -21,7 +21,7 @@ $recentRequisitions = [
         'title' => 'Sports Equipment Purchase',
         'department' => 'Sports',
         'date' => '2026-03-16 10:25',
-        'status' => 'Pending Principal'
+        'status' => 'pending'
     ],
     [
         'number' => 'REQ-2026-0002',
@@ -46,7 +46,7 @@ $recentQuotes = [
         'title' => 'Soccer Kits',
         'department' => 'Sports',
         'date' => '2026-03-16 12:00',
-        'status' => 'Pending Principal'
+        'status' => 'pending'
     ],
     [
         'quote_number' => 'QTE-2026-0002',
@@ -62,7 +62,7 @@ function badgeClass($status) {
     return match ($status) {
         'Approved' => 'bg-success-subtle text-success',
         'Rejected' => 'bg-danger-subtle text-danger',
-        'Pending Principal' => 'bg-warning-subtle text-warning-emphasis',
+        'pending' => 'bg-warning-subtle text-warning-emphasis',
         default => 'bg-secondary-subtle text-secondary'
     };
 }

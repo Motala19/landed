@@ -1,22 +1,38 @@
 <?php 
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Use the correct session variable
+$userName = $_SESSION['full_name'] ?? 'User';
+$role = $_SESSION['role'];
+
 include 'includes/db.php';
 
-$result = $conn->query("SELECT * FROM requisitions ORDER BY created_at DESC");
+// FIXED: Show ONLY the logged-in user's own requisitions
+$stmt = $conn->prepare("
+    SELECT * FROM requisitions 
+    WHERE created_by = ? 
+      AND deleted_at IS NULL 
+    ORDER BY created_at DESC
+");
+$stmt->bind_param("s", $userName);
+$stmt->execute();
+$result = $stmt->get_result();
 
-
-$userName = "Motala Godfrey";
 $currentDate = date("l, d F Y");
 $currentTime = date("H:i:s");
 
-
-
 function badgeClass($status) {
-    return match ($status) {
-        'Approved' => 'bg-success-subtle text-success',
-        'Rejected' => 'bg-danger-subtle text-danger',
-        'Pending Principal' => 'bg-warning-subtle text-warning',
-        default => 'bg-secondary'
+    return match (strtolower($status)) {
+        'approved' => 'bg-success-subtle text-success',
+        'rejected' => 'bg-danger-subtle text-danger',
+        'pending'  => 'bg-warning-subtle text-warning',
+        'new'      => 'bg-primary-subtle text-primary',
+        default    => 'bg-secondary-subtle text-secondary'
     };
 }
 ?>
@@ -24,11 +40,11 @@ function badgeClass($status) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Requisitions</title>
+    <title>My Requisitions</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-
 <body>
 <div class="container-fluid">
 <div class="row">
@@ -39,102 +55,86 @@ function badgeClass($status) {
 
 <!-- HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-4">
-    
-
     <div>
-        <h3>My Requisitions</h3>
+       <br><br> <h3>My Requisitions</h3>
         <small><?php echo $currentDate . " | " . $currentTime; ?></small>
     </div>
 
-    <!-- USER INFO + BUTTON -->
     <div class="text-end">
-        <div><strong><?php echo $userName; ?></strong></div>
-        <small class="text-muted">Staff</small>
-        <br><br>
-        <a href="create_requisition.php">
-        <button class="btn btn-primary mt-2">
-            + Create Requisition
-        </button>
+        <div><strong><?php echo htmlspecialchars($userName); ?></strong></div>
+        <small class="text-muted"><?= ucfirst($role) ?></small><br>
+        
+        <a href="create_requisition.php" class="btn btn-primary mt-3">
+            <i class="bi bi-plus-lg"></i> Create New Requisition
         </a>
+        
     </div>
-
-</div>
-
-<!-- SEARCH / FILTER -->
-<div class="card-box mb-3">
-    <input style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px;" type="text" class="form-control" placeholder="Search requisitions...">
 </div>
 
 <!-- TABLE -->
-<div class="card-box">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Number</th>
-                <th>Title</th>
-                <th>Department</th>
-                <th>Date</th>
-                <th>Created By</th> <!-- ✅ NEW -->
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Title</th>
+                    <th>Department</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if ($result->num_rows == 0): ?>
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        You have not created any requisitions yet.
+                    </td>
+                </tr>
+            <?php else: ?>
+                <?php while($r = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo $r['requisition_number']; ?></td>
+                    <td><?php echo htmlspecialchars($r['title']); ?></td>
+                    <td><?php echo htmlspecialchars($r['department']); ?></td>
+                    <td><?php echo date("d M Y", strtotime($r['created_at'])); ?></td>
+                    
+                    <td>
+                        <span class="badge <?php echo badgeClass($r['status']); ?>">
+                            <?php echo ucfirst($r['status']); ?>
+                        </span>
+                    </td>
 
-        <tbody>
-            <?php while($r = $result->fetch_assoc()): ?>
-<tr>
-    <td>
-    <?php echo $r['requisition_number']; ?>
-    </td>
-    <td><?php echo $r['title']; ?></td>
-    <td><?php echo $r['department']; ?></td>
-    <td><?php echo $r['created_at']; ?></td>
-    <td><?php echo $r['created_by']; ?></td>
-   <td>
-    <span class="badge <?php echo badgeClass($r['status']); ?>">
-        <?php echo $r['status']; ?>
-    </span>
+                    <td>
+                        <?php if($r['status'] != 'Rejected'): ?>
+                            <a href="view-requisition.php?id=<?php echo $r['id']; ?>" 
+                               class="btn btn-sm btn-primary">View</a>
+                        <?php endif; ?>
 
-    <?php if($r['status'] == 'Rejected' && !empty($r['rejection_reason'])): ?>
-        <div class="text-danger small mt-1">
-            Reason: <?php echo $r['rejection_reason']; ?>
-        </div>
-    <?php endif; ?>
-</td>
-    
+                        <?php if($r['status'] == 'Rejected'): ?>
+                            <a href="edit-requisition.php?id=<?php echo $r['id']; ?>" 
+                               class="btn btn-sm btn-warning">Edit</a>
+                        <?php endif; ?>
 
-    <td>
-    <a href="edit-requisition.php?id=<?php echo $r['id']; ?>" class="btn btn-sm btn-edit">
-        Edit
-    </a>
-
-    <a href="delete-requisition.php?id=<?php echo $r['id']; ?>" 
-       class="btn btn-sm btn-danger"
-       onclick="return confirm('Are you sure?')">
-        Delete
-    </a>
-</td>
-</tr>
-<?php endwhile; ?>
-        </tbody>
-    </table>
+                        <a href="staff-delete.php?id=<?php echo $r['id']; ?>" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Remove from your view?')">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 </div>
 </div>
 </div>
 
-<style>
-.btn-edit {
-    background: #1F3A5F;
-    color: white;
-    border: none;
-    margin-right: 5px;
-}
-.btn-edit:hover {
-    background: #7A1F2B;
-}
-</style>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

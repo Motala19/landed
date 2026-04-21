@@ -1,7 +1,14 @@
 <?php 
 session_start();
 
-$userName = "Motala Godfrey";
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Use the correct session value
+$userName = $_SESSION['full_name'] ?? 'Unknown User';
+$role = $_SESSION['role'];
 ?>
 
 <!DOCTYPE html>
@@ -9,6 +16,7 @@ $userName = "Motala Godfrey";
 <head>
     <title>Create Requisition</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body class="bg-light">
@@ -24,8 +32,8 @@ $userName = "Motala Godfrey";
         </div>
 
         <div class="text-end">
-            <strong><?php echo $userName; ?></strong><br>
-            <small class="text-muted">Staff</small>
+            <strong><?php echo htmlspecialchars($userName); ?></strong><br>
+            <small class="text-muted"><?= ucfirst($role) ?></small>
         </div>
 
     </div>
@@ -51,8 +59,8 @@ $userName = "Motala Godfrey";
                     <option>Academics</option>
                     <option>Sports</option>
                     <option>Administration</option>
-                     <option>LTSM</option>
-                      <option>Maintanance</option>
+                    <option>LTSM</option>
+                    <option>Maintenance</option>
                 </select>
             </div>
             
@@ -64,21 +72,21 @@ $userName = "Motala Godfrey";
             </div>
             
 
-            <!-- BUDGET TO BE MOVED TO FINANCE MODULE-->
+            <!-- PAYMENT TYPE -->
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Payment Type</strong></label>
                 <select class="form-control" name="payment_type" required>
                     <option value="">-- Select Option --</option>
                     <option value="Cash">Cash</option>
                     <option value="Card">Card</option>
-                     <option value="Eft">Eft</option>
-                     <option value="Eft">Online</option>
+                    <option value="Eft">Eft</option>
+                    <option value="Online">Online</option>
                 </select>
             </div>
             
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>TO WHOM PAYABLE</strong></label>
-                <input type="text" class="form-control" name="payable_to" placeholder="Enter the name of the person or entity" min="0" required>
+                <input type="text" class="form-control" name="payable_to" placeholder="Enter the name of the person or entity" required>
             </div>
 
             <!-- DESCRIPTION -->

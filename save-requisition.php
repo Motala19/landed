@@ -2,7 +2,7 @@
 session_start();
 include 'includes/db.php';
 
-$userName = $_SESSION['userName'] ?? 'Motala Godfrey';
+$userName = $_SESSION['full_name'] ?? 'Unknown User';
 
 // FORM DATA
 $title        = $_POST['title'];
@@ -53,7 +53,7 @@ try {
     $sql = "INSERT INTO requisitions 
 (requisition_number, title, department, amount, payment_type, payable_to, description, document, created_by, status)
 VALUES 
-('$reqNumber', '$title', '$department', '$amount', '$payment_type', '$payable_to', '$description', '$documentName', '$userName', 'Pending')";
+('$reqNumber', '$title', '$department', '$amount', '$payment_type', '$payable_to', '$description', '$documentName', '$userName', 'new')";
 
     $conn->query($sql);
 

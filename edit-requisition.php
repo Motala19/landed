@@ -7,7 +7,13 @@ $id = $_GET['id'];
 // GET DATA
 $result = $conn->query("SELECT * FROM requisitions WHERE id = $id");
 $r = $result->fetch_assoc();
+
 ?>
+<?php if($r['status'] != 'Rejected'): ?>
+    <div class="alert alert-danger">
+        You can only edit rejected requisitions.
+    </div>
+<?php endif; ?>
 
 <!DOCTYPE html>
 <html>
@@ -92,10 +98,19 @@ $r = $result->fetch_assoc();
         </div>
 
         <!-- BUTTONS -->
-        <div class="d-flex justify-content-end">
-            <a href="requisitions.php" class="btn btn-secondary me-2">Cancel</a>
-            <button type="submit" class="btn btn-success">Update</button>
-        </div>
+        
+
+        <div class="d-flex justify-content-end mt-3">
+    <a href="requisitions.php" class="btn btn-secondary me-2">Cancel</a>
+
+    <button type="submit" name="action" value="update" class="btn btn-warning me-2">
+        Save Changes
+    </button>
+
+    <button type="submit" name="action" value="resubmit" class="btn btn-success">
+        Resubmit
+    </button>
+</div>
 
         </form>
 

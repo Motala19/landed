@@ -39,3 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+document.querySelector("form").addEventListener("submit", function(e) {
+    let action = document.activeElement.value;
+
+    let rejectReason = document.querySelector("[name='reject_reason']").value;
+
+    if (action === "reject" && rejectReason.trim() === "") {
+        e.preventDefault();
+        alert("Rejection reason is required");
+    }
+});
