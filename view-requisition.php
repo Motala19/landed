@@ -59,10 +59,7 @@ switch($from) {
             <?php endif; ?>
         </div>
 
-        <div class="text-end">
-            <strong><?php echo $userName; ?></strong><br>
-            <small class="text-muted">Finance</small>
-        </div>
+       
     </div>
 
     <!-- FORM (READ ONLY) -->

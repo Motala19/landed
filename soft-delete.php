@@ -1,5 +1,5 @@
 <?php
-include 'includes/db.php';
+/* include 'includes/db.php';
 
 $id = (int)($_GET['id'] ?? 0);
 $role = strtolower(trim($_GET['role'] ?? ''));
@@ -17,5 +17,5 @@ $stmt->execute();
 
 $redirect = $role . "-dashboard.php";
 header("Location: $redirect");
-exit;
+exit;*/
 ?>

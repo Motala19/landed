@@ -69,7 +69,7 @@ $currentTime = date("H:i:s");
                     <i class="fas fa-users me-2"></i> Manage Users
                 </a>
                 <a href="requisitions.php" class="btn btn-primary px-4 py-2">
-                    <i class="fas fa-plus me-2"></i> Create Requisition
+                    <i class="fas fa-plus me-2"></i> My Requisitions
                 </a>
             </div>
         </div>
@@ -243,9 +243,23 @@ $currentTime = date("H:i:s");
     <td><?php echo $r['created_by']; ?></td>
     <td><?php echo date("d M Y H:i", strtotime($r['created_at'])); ?></td>
     <td>
-    <a href="view-requisition.php?id=<?php echo $r['id']; ?>&type=pending&from=finance" class="btn btn-sm btn-primary">View</a>
-    <a href="finance-delete.php?id=<?php echo $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Permanently delete this record?')">Delete</a>
+    <td>
+    <a href="view-requisition.php?id=<?php echo $r['id']; ?>&type=pending&from=finance" 
+       class="btn btn-sm btn-primary">View</a>
+    
+    <a href="export-approved-pdf.php?id=<?php echo $r['id']; ?>" 
+       class="btn btn-sm btn-success" target="_blank">
+        <i class="fas fa-file-pdf"></i> PDF
+    </a>
+    
+    <a href="finance-delete.php?id=<?php echo $r['id']; ?>" 
+       class="btn btn-sm btn-danger"
+       onclick="return confirm('Permanently delete this record?')">
+        Delete
+    </a>
+</td>
     </td>
+    
     </tr>
     <?php endwhile; ?>
     </tbody>

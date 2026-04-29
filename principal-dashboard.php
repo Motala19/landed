@@ -68,7 +68,7 @@ $currentTime = date("H:i:s");
             <div class="d-flex gap-2">
                 
                 <a href="requisitions.php" class="btn btn-primary px-4 py-2">
-                    <i class="fas fa-plus me-2"></i> Create Requisition
+                    <i class="fas fa-plus me-2"></i> My Requisitions
                 </a>
             </div>
         </div>

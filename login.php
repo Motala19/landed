@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: #f8f9fa;
+            background: #0B1D39;
         }
         .login-box {
             max-width: 420px;
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php if ($error): ?>
                 <div class="alert alert-danger text-center">
-                    <?= htmlspecialchars($error) ?>
+                    <?= htmlspecialchars($error) ?> 
                 </div>
             <?php endif; ?>
 

@@ -1,4 +1,5 @@
 <?php
+
 include 'includes/db.php';
 
 $id = $_GET['id'];
@@ -12,5 +13,5 @@ $conn->query("
 ");
 
 header("Location: requisitions.php");
-exit;
+exit; 
 ?>
