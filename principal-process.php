@@ -1,25 +1,32 @@
 <?php
+session_start();
 include 'includes/db.php';
+include 'includes/audit_logger.php';   // ← Added
 
-$id = (int)($_POST['id'] ?? 0);
-$action = $_POST['action'] ?? '';
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
+$id            = (int)($_POST['id'] ?? 0);
+$action        = $_POST['action'] ?? '';
 $approveReason = $_POST['approve_reason'] ?? '';
-$rejectReason = $_POST['reject_reason'] ?? '';
+$rejectReason  = $_POST['reject_reason'] ?? '';
 
 if ($id === 0) {
     header("Location: principal-dashboard.php");
     exit;
 }
 
-// GET CURRENT DATA
+$user_id   = $_SESSION['user_id'];
+$user_name = $_SESSION['full_name'] ?? 'Principal User';
+$role      = $_SESSION['role'] ?? 'principal';
+
+// Get current budget status
 $result = $conn->query("SELECT budget_status FROM requisitions WHERE id = $id");
 $data = $result->fetch_assoc();
 $budgetStatus = $data['budget_status'] ?? '';
 
-// =============================
-// APPROVE
-// =============================
 if ($action == 'approve') {
 
     if ($budgetStatus == 'No' && empty($approveReason)) {
@@ -35,11 +42,11 @@ if ($action == 'approve') {
 
     $stmt->bind_param("si", $approveReason, $id);
     $stmt->execute();
+
+    // Audit Log
+    log_audit($user_id, $user_name, $role, 'Requisition Approved', $id, "Principal Reason: $approveReason");
 }
 
-// =============================
-// REJECT
-// =============================
 if ($action == 'reject') {
 
     $stmt = $conn->prepare("UPDATE requisitions 
@@ -50,6 +57,9 @@ if ($action == 'reject') {
 
     $stmt->bind_param("si", $rejectReason, $id);
     $stmt->execute();
+
+    // Audit Log
+    log_audit($user_id, $user_name, $role, 'Requisition Rejected', $id, "Reason: $rejectReason");
 }
 
 header("Location: principal-dashboard.php");

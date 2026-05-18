@@ -1,8 +1,14 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'includes/audit_logger.php';   // ← Added
 
-$id = (int)($_POST['id'] ?? 0);
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$id     = (int)($_POST['id'] ?? 0);
 $action = $_POST['action'] ?? '';
 $reason = $_POST['reason'] ?? '';
 
@@ -10,6 +16,10 @@ if ($id === 0 || !$action) {
     header("Location: treasurer-dashboard.php");
     exit;
 }
+
+$user_id   = $_SESSION['user_id'];
+$user_name = $_SESSION['full_name'] ?? 'Treasurer User';
+$role      = $_SESSION['role'] ?? 'treasurer';
 
 if ($action == 'approve') {
 
@@ -22,6 +32,9 @@ if ($action == 'approve') {
 
     $stmt->bind_param("i", $id);
     $stmt->execute();
+
+    // Audit Log
+    log_audit($user_id, $user_name, $role, 'Requisition Approved', $id, 'Final Approval by Treasurer');
 }
 
 if ($action == 'reject') {
@@ -34,6 +47,9 @@ if ($action == 'reject') {
 
     $stmt->bind_param("si", $reason, $id);
     $stmt->execute();
+
+    // Audit Log
+    log_audit($user_id, $user_name, $role, 'Requisition Rejected', $id, "Reason: $reason");
 }
 
 header("Location: treasurer-dashboard.php");

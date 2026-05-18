@@ -1,22 +1,29 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'includes/audit_logger.php';   // ← Added
 
-// ✅ SAFE FETCH
-$id = (int)($_POST['id'] ?? 0);
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$id     = (int)($_POST['id'] ?? 0);
 $action = $_POST['action'] ?? null;
 $budget = $_POST['budget_check'] ?? '';
 $reason = $_POST['reason'] ?? '';
 
-// 🚨 STOP if not coming from form
 if ($id === 0 || !$action) {
     header("Location: finance-dashboard.php");
     exit;
 }
 
+$user_id   = $_SESSION['user_id'];
+$user_name = $_SESSION['full_name'] ?? 'Finance User';
+$role      = $_SESSION['role'] ?? 'finance';
+
 if ($action == 'verify') {
 
-    // ✅ Verify and send to Principal - reset deleted flags
     $stmt = $conn->prepare("UPDATE requisitions 
         SET status = 'Pending', 
             budget_status = ?,
@@ -28,13 +35,15 @@ if ($action == 'verify') {
     $stmt->bind_param("si", $budget, $id);
     $stmt->execute();
 
-    header("Location: finance-dashboard.php");
+    // Audit Log
+    log_audit($user_id, $user_name, $role, 'Requisition Verified', $id, "Budget Status: $budget");
+
+    header("Location: finance-dashboard.php?success=verified");
     exit;
 }
 
 if ($action == 'reject') {
 
-    // ❌ Reject
     $stmt = $conn->prepare("UPDATE requisitions 
         SET status = 'Rejected', 
             rejection_reason = ?,
@@ -45,7 +54,10 @@ if ($action == 'reject') {
     $stmt->bind_param("ssi", $reason, $budget, $id);
     $stmt->execute();
 
-    header("Location: finance-dashboard.php");
+    // Audit Log
+    log_audit($user_id, $user_name, $role, 'Requisition Rejected', $id, "Reason: $reason");
+
+    header("Location: finance-dashboard.php?success=rejected");
     exit;
 }
 ?>

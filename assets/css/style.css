@@ -228,3 +228,125 @@ textarea.form-control {
 .dashboard-card.status-rejected.active-card {
     box-shadow: 0 0 20px rgba(220, 53, 69, 0.8);
 }
+.dashboard-card {
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.dashboard-card h6 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff !important; /* force white text */
+}
+
+.dashboard-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #fff !important; /* force white text */
+}
+
+.dashboard-card i {
+    color: #fff !important; /* ensure icons are visible */
+}
+.dashboard-card {
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #fff;
+}
+
+.dashboard-card .card-body {
+    align-items: flex-start; /* pushes content to the top */
+}
+.dashboard-card .card-body {
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-start; /* pushes content to the top */
+}
+
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.dashboard-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+}
+
+.dashboard-card h6 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.card-icon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 3.5rem;
+    opacity: 0.15; /* faded look */
+    color: #000;   /* faded black like  */
+    pointer-events: none; /* icon is decorative only */
+}
+
+.dashboard-card.bg-warning h2,
+.dashboard-card.bg-warning h6 {
+    color: #000 !important; /* black text for Pending card */
+}
+.dashboard-card.active-card {
+    transform: scale(1.05);   /* expand slightly */
+    z-index: 10;              /* bring above others */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25); /* stronger shadow */
+}
+.sidebar-footer {
+    border-top: 1px solid #1C3A63;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+
+.sidebar-footer .footer-brand {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #A0AEC0;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-footer .footer-brand span {
+    color: #E0E6ED; /* brighter highlight */
+    font-weight: 600;
+    font-family: "Segoe UI", cursive;
+}
+.collapse.show {
+    display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
+}
+
+.collapse.collapsing {
+    animation: fadeSlideOut 0.4s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(10px); }
+}
+
+
+
+
