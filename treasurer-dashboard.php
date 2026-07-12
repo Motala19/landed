@@ -456,7 +456,7 @@ View
 
 <a href="soft-delete.php?id=<?php echo $r['id']; ?>&role=treasurer"
 class="btn btn-sm btn-danger"
-onclick="return confirm('Remove from treasurer view?')">
+onclick="return confirm('Are you sure you want to delete this requisition?')">
 Delete
 </a>
 
@@ -596,7 +596,7 @@ View
 
 <a href="soft-delete.php?id=<?php echo $r['id']; ?>&role=treasurer"
 class="btn btn-sm btn-danger"
-onclick="return confirm('Remove from treasurer view?')">
+onclick="return confirm('Are you sure you want to delete this requisition?')">
 Delete
 </a>
 

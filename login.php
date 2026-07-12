@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          style="width: 110px; height: 110px; object-fit: contain;">
     
     <h4 class="fw-bold">Midrand Primary School</h4>
-    <p class="text-muted">Requisition Management System</p>
+    <p class="text-muted">Requisition Management</p>
 </div>
 
             <?php if ($error): ?>

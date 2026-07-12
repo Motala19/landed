@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-if (!in_array($_SESSION['role'], ['finance', 'admin'])) {
+if (!in_array($_SESSION['role'], ['finance', 'admin', 'staff', 'treasurer', 'principal'])) {
     header("Location: requisitions.php");
     exit;
 }
@@ -260,7 +260,7 @@ Edit
 
 <a href="staff-delete.php?id=<?php echo $r['id']; ?>"
 class="btn btn-sm btn-danger"
-onclick="return confirm('Remove from your view?')">
+onclick="return confirm('Are you sure you want to delete this requisition?')">
 
 Delete
 

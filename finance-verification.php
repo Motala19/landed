@@ -138,7 +138,7 @@ $requisition = $result->fetch_assoc();
         <!-- BUTTONS -->
         <div class="d-flex justify-content-end mt-3">
             <button type="submit" name="action" value="reject" class="btn btn-danger me-2">Reject</button>
-            <button type="submit" name="action" value="verify" class="btn btn-success">Verify</button>
+            <button type="submit" name="action" value="verify" class="btn btn-success">Request</button>
             
         </div>
 

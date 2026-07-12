@@ -12,7 +12,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <img src="assets/images/logo.png" alt="MPS Logo" 
                  style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 0.4rem;">
             <h5 class="mb-1 fw-semibold" style="font-size: 1.1rem; color: #E0E6ED;">Midrand Primary</h5>
-            <small style="font-size: 0.8rem; color: #A0AEC0; line-height: 1;">Requisition System</small>
+            <small style="font-size: 0.8rem; color: #A0AEC0; line-height: 1;">Requisition Management</small>
         </div>
     </div>
 
