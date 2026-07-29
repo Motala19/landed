@@ -226,7 +226,7 @@ You have not created any requisitions yet.
 
 <td><?php echo htmlspecialchars($r['department']); ?></td>
 
-<td><?php echo date("d M Y", strtotime($r['created_at'])); ?></td>
+<td><?php echo date("d M Y H:i", strtotime($r['created_at'])); ?></td>
 
 <td>
 
@@ -256,6 +256,15 @@ class="btn btn-sm btn-warning">
 Edit
 </a>
 
+
+
+<?php endif; ?>
+
+<?php if ($r['status'] == 'Paid' && !empty($r['payment_proof'])): ?>
+    <a href="uploads/<?php echo $r['payment_proof']; ?>" 
+       class="btn btn-sm btn-info" target="_blank">
+        POP
+    </a>
 <?php endif; ?>
 
 <a href="staff-delete.php?id=<?php echo $r['id']; ?>"

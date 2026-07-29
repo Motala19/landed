@@ -1,19 +1,42 @@
 <?php
 session_start();
 
-// 🚫 Prevent caching
+// Prevent caching
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
 include 'includes/db.php';
 
-$userName = "Principal User";
+// User must be logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
-$id = $_GET['id'] ?? 0;
+// Only Principal and Admin can access
+if (!in_array($_SESSION['role'], ['principal', 'admin'])) {
+    header("Location: login.php");
+    exit;
+}
 
-$result = $conn->query("SELECT * FROM requisitions WHERE id = $id");
+$userName = $_SESSION['full_name'] ?? 'Principal User';
+$id = (int)($_GET['id'] ?? 0);
+
+if ($id === 0) {
+    header("Location: principal-dashboard.php");
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT * FROM requisitions WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
 $requisition = $result->fetch_assoc();
+
+if (!$requisition) {
+    die("Requisition not found.");
+}
 ?>
 
 <!DOCTYPE html>

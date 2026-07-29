@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Only Finance and Admin can see full reports for now
-if (!in_array($_SESSION['role'], ['finance', 'admin', 'principal', 'treasurer'])) {
+if (!in_array($_SESSION['role'], ['finance', 'admin'])) {
     header("Location: requisitions.php");
     exit;
 }

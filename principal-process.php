@@ -1,7 +1,8 @@
 <?php
 session_start();
 include 'includes/db.php';
-include 'includes/audit_logger.php';   // ← Added
+include 'includes/audit_logger.php';
+include 'includes/notification.php';   // ← Added for email
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -45,7 +46,13 @@ if ($action == 'approve') {
 
     // Audit Log
     log_audit($user_id, $user_name, $role, 'Requisition Approved', $id, "Principal Reason: $approveReason");
-}
+
+    // Notify Treasurer
+    send_email_notification("treasurer@midrandprimary.co.za", 
+        "Requisition Approved by Principal", 
+        "A requisition has been approved by Principal and is now waiting for your final approval.");
+
+} 
 
 if ($action == 'reject') {
 
@@ -60,6 +67,11 @@ if ($action == 'reject') {
 
     // Audit Log
     log_audit($user_id, $user_name, $role, 'Requisition Rejected', $id, "Reason: $rejectReason");
+
+    // Notify Staff / Creator
+    send_email_notification("staff@midrandprimary.co.za", 
+        "Requisition Rejected by Principal", 
+        "Your requisition was rejected by Principal. Reason: $rejectReason");
 }
 
 header("Location: principal-dashboard.php");

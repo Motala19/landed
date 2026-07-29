@@ -38,7 +38,7 @@ WHERE status='Principal Approved' AND deleted_by_principal = 0
 
 $approvedRequisitions = $conn->query("
 SELECT COUNT(*) as c FROM requisitions 
-WHERE status='Approved' AND deleted_by_principal = 0
+WHERE status IN ('Approved', 'Paid') AND deleted_by_principal = 0
 ")->fetch_assoc()['c'];
 
 $rejectedRequisitions = $conn->query("
@@ -581,7 +581,7 @@ onchange="this.form.submit()">
 <?php
 $result = $conn->query("
 SELECT * FROM requisitions 
-WHERE status='Approved'
+WHERE status IN ('Approved', 'Paid')
 AND deleted_by_principal = 0
 ORDER BY id DESC 
 LIMIT $approvedStart, $limit

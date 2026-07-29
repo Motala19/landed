@@ -1,27 +1,45 @@
 <?php
 session_start();
 
-// 🚫 Prevent browser caching (VERY IMPORTANT)
+// Prevent browser caching
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
- 
 
-
-$userName = "Finance User";
-
-// Dummy pre-filled data from staff requisition
 include 'includes/db.php';
 
-$id = $_GET['id'] ?? 0;
+// User must be logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
-$result = $conn->query("SELECT * FROM requisitions WHERE id = $id");
+// Only Finance and Admin can access this page
+if (!in_array($_SESSION['role'], ['finance', 'admin'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$userName = $_SESSION['full_name'] ?? 'Finance User';
+$id = (int)($_GET['id'] ?? 0);
+
+if ($id === 0) {
+    header("Location: finance-dashboard.php");
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT * FROM requisitions WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
 $requisition = $result->fetch_assoc();
 
-
-
-
+if (!$requisition) {
+    die("Requisition not found.");
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html>

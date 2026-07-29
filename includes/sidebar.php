@@ -1,5 +1,6 @@
 <?php
 $currentPage = basename($_SERVER['PHP_SELF']);
+$role = $_SESSION['role'] ?? '';
 ?>
 
 <!-- Sidebar -->
@@ -20,8 +21,19 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <div class="p-3 pt-3">
         <ul class="nav flex-column">
 
-            <!-- Dashboards -->
-            <?php if (in_array($_SESSION['role'], ['principal', 'admin'])): ?>
+            <!-- ADMIN DASHBOARD (only for Admin) -->
+            <?php if ($role === 'admin'): ?>
+            <li class="nav-item">
+                <a href="dashboard.php" 
+                   class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'dashboard.php') ? 'active' : '' ?>">
+                    <i class="fa-solid fa-gauge-high me-2"></i> 
+                    <span>Admin Dashboard</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <!-- PRINCIPAL DASHBOARD (only Principal) -->
+            <?php if ($role === 'principal'): ?>
             <li class="nav-item">
                 <a href="principal-dashboard.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'principal-dashboard.php') ? 'active' : '' ?>">
@@ -31,7 +43,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             <?php endif; ?>
 
-            <?php if (in_array($_SESSION['role'], ['finance', 'admin'])): ?>
+            <!-- FINANCE DASHBOARD (only Finance) -->
+            <?php if ($role === 'finance'): ?>
             <li class="nav-item">
                 <a href="finance-dashboard.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'finance-dashboard.php') ? 'active' : '' ?>">
@@ -41,7 +54,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             <?php endif; ?>
 
-            <?php if (in_array($_SESSION['role'], ['treasurer', 'admin'])): ?>
+            <!-- TREASURER DASHBOARD (only Treasurer) -->
+            <?php if ($role === 'treasurer'): ?>
             <li class="nav-item">
                 <a href="treasurer-dashboard.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'treasurer-dashboard.php') ? 'active' : '' ?>">
@@ -51,7 +65,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             <?php endif; ?>
 
-            <!-- My Requisitions -->
+            <!-- My Requisitions (everyone) -->
             <li class="nav-item">
                 <a href="requisitions.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'requisitions.php') ? 'active' : '' ?>">
@@ -60,7 +74,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
-            <?php if (in_array($_SESSION['role'], ['finance', 'admin'])): ?>
+            <!-- Manage Users (Finance + Admin) -->
+            <?php if (in_array($role, ['finance', 'admin'])): ?>
             <li class="nav-item">
                 <a href="manage-users.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'manage-users.php') ? 'active' : '' ?>">
@@ -70,6 +85,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             <?php endif; ?>
 
+            <!-- Reports (everyone for now, or restrict if you want) -->
             <li class="nav-item">
                 <a href="reports.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'reports.php') ? 'active' : '' ?>">
@@ -80,7 +96,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
             <hr style="border-color: #1C3A63;" class="my-3">
 
-            <!-- Modern Logout Button -->
+            <!-- Logout -->
             <li class="nav-item">
                 <a href="logout.php" class="logout-btn d-flex align-items-center px-3 py-2">
                     <i class="fa-solid fa-right-from-bracket me-2"></i> 
@@ -90,11 +106,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
         </ul>
     </div>
+
     <div class="sidebar-footer text-center mt-auto p-3">
-    <small class="footer-brand"><footer class="text-center copyright-footer">
-    <small>&copy; 2026 MMSolutions. All rights reserved.</small>
-</footer></small>
-</div>
+        <small class="footer-brand">
+            <footer class="text-center copyright-footer">
+                <small>&copy; 2026 MMSolutions. All rights reserved.</small>
+            </footer>
+        </small>
+    </div>
 
 </div>
 
@@ -119,7 +138,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         margin-bottom: 0.4rem;
     }
 
-    /* Modern Logout Button */
     .logout-btn {
         background: linear-gradient(90deg, #E53E3E, #C53030);
         color: #fff !important;
@@ -135,29 +153,21 @@ $currentPage = basename($_SERVER['PHP_SELF']);
    .sidebar {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* pushes footer to bottom */
+    justify-content: space-between;
 }
 
 .sidebar-footer {
-    margin-top: auto; /* ensures it sits at the bottom */
+    margin-top: auto;
     padding: 10px;
     border-top: 1px solid #1C3A63;
 }
 
 .sidebar-footer .footer-brand {
     font-style: italic;
-    font-size: 0.75rem; /* smaller text */
+    font-size: 0.75rem;
     color: #A0AEC0;
     letter-spacing: 0.5px;
 }
-
-.sidebar-footer .footer-brand span {
-    color: #E0E6ED;
-    font-weight: 600;
-}
-
-
 </style>
 
-<!-- Load Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">

@@ -56,10 +56,13 @@ $pendingStart = ($pendingPage - 1) * $limit;
 $pendingTotal = $conn->query("SELECT COUNT(*) as total FROM requisitions WHERE status='Pending'")->fetch_assoc()['total'];
 $pendingPages = ceil($pendingTotal / $limit);
 
-// APPROVED
+// APPROVED (now includes Paid)
 $approvedPage = isset($_GET['approved_page']) ? (int)$_GET['approved_page'] : 1;
 $approvedStart = ($approvedPage - 1) * $limit;
-$approvedTotal = $conn->query("SELECT COUNT(*) as total FROM requisitions WHERE status='Approved'")->fetch_assoc()['total'];
+$approvedTotal = $conn->query("
+    SELECT COUNT(*) as total FROM requisitions 
+    WHERE status IN ('Approved', 'Paid')
+")->fetch_assoc()['total'];
 $approvedPages = ceil($approvedTotal / $limit);
 
 // REJECTED
@@ -471,7 +474,7 @@ Next
 </div>
 
 <!-- ========================= -->
-<!-- APPROVED -->
+<!-- APPROVED / PAID -->
 <!-- ========================= -->
 
 <div id="approvedReq"
@@ -482,7 +485,7 @@ data-bs-parent="#reqAccordion">
 
 <div class="d-flex justify-content-between align-items-center mb-3">
 
-<h5 class="mb-0">Approved Requisitions</h5>
+<h5 class="mb-0">Approved / Paid Requisitions</h5>
 
 <form method="GET" class="d-flex align-items-center gap-2">
 
@@ -515,6 +518,7 @@ onchange="this.form.submit()">
 <th>Department</th>
 <th>Created By</th>
 <th>Date Created</th>
+<th>Status</th>
 <th>Action</th>
 </tr>
 </thead>
@@ -522,7 +526,10 @@ onchange="this.form.submit()">
 <tbody>
 
 <?php
-$result = $conn->query("SELECT * FROM requisitions WHERE status='Approved' ORDER BY id DESC LIMIT $approvedStart, $limit");
+$result = $conn->query("SELECT * FROM requisitions 
+                        WHERE status IN ('Approved', 'Paid') 
+                        ORDER BY id DESC 
+                        LIMIT $approvedStart, $limit");
 
 while($r = $result->fetch_assoc()):
 ?>
@@ -536,22 +543,40 @@ while($r = $result->fetch_assoc()):
 <td><?php echo date("d M Y H:i", strtotime($r['created_at'])); ?></td>
 
 <td>
+    <?php if ($r['status'] == 'Paid'): ?>
+        <span class="badge bg-success">Paid</span>
+    <?php else: ?>
+        <span class="badge bg-warning">Approved</span>
+    <?php endif; ?>
+</td>
+
+<td>
 
 <a href="view-requisition.php?id=<?php echo $r['id']; ?>&type=pending&from=finance"
 class="btn btn-sm btn-primary">
 View
 </a>
 
+<?php if ($r['status'] == 'Approved'): ?>
+    <a href="pay-requisition.php?id=<?php echo $r['id']; ?>" 
+       class="btn btn-sm btn-warning">
+        Pay
+    </a>
+
+    
+<?php endif; ?>
+
+<?php if ($r['status'] == 'Paid' && !empty($r['payment_proof'])): ?>
+    <a href="uploads/<?php echo $r['payment_proof']; ?>" 
+       class="btn btn-sm btn-info" target="_blank">
+        POP
+    </a>
+<?php endif; ?>
+
 <a href="export-approved-pdf.php?id=<?php echo $r['id']; ?>"
 class="btn btn-sm btn-success"
 target="_blank">
 PDF
-</a>
-
-<a href="finance-delete.php?id=<?php echo $r['id']; ?>"
-class="btn btn-sm btn-danger"
-onclick="return confirm('Permanently delete this record?')">
-Delete
 </a>
 
 </td>

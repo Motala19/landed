@@ -6,9 +6,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Use the correct session value
 $userName = $_SESSION['full_name'] ?? 'Unknown User';
 $role = $_SESSION['role'];
+
+// Show error if redirected with error
+$error = $_GET['error'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -18,14 +20,12 @@ $role = $_SESSION['role'];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body class="bg-light">
 
 <div class="container mt-5">
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <div>
             <a href="requisitions.php" class="btn btn-secondary mb-2">← Back</a>
             <h3>Create Requisition</h3>
@@ -35,16 +35,19 @@ $role = $_SESSION['role'];
             <strong><?php echo htmlspecialchars($userName); ?></strong><br>
             <small class="text-muted"><?= ucfirst($role) ?></small>
         </div>
-
     </div>
+
+    <?php if ($error): ?>
+    <div class="alert alert-danger">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+    <?php endif; ?>
 
     <!-- FORM -->
     <div class="card shadow-sm p-4">
-
        <form action="save-requisition.php" method="POST" enctype="multipart/form-data">
 
         <div class="row">
-
             <!-- TITLE -->
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Requisition Title</strong></label>
@@ -63,14 +66,12 @@ $role = $_SESSION['role'];
                     <option>Maintenance</option>
                 </select>
             </div>
-            
 
             <!-- AMOUNT -->
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Amount (R)</strong></label>
                 <input type="number" class="form-control" name="amount" placeholder="Enter amount in Rands" min="0" required>
             </div>
-            
 
             <!-- PAYMENT TYPE -->
             <div class="col-md-6 mb-3">
@@ -83,7 +84,7 @@ $role = $_SESSION['role'];
                     <option value="Online">Online</option>
                 </select>
             </div>
-            
+
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>TO WHOM PAYABLE</strong></label>
                 <input type="text" class="form-control" name="payable_to" placeholder="Enter the name of the person or entity" required>
@@ -99,7 +100,7 @@ $role = $_SESSION['role'];
             <div class="col-12 mb-3">
                 <label class="form-label"><strong>Supporting Document</strong></label>
                 <input type="file" name="document" class="form-control">
-                <small class="text-muted">Upload any supporting document (PDF, DOCX, Image)</small>
+                <small class="text-muted">Upload any supporting document (PDF, DOCX, Image). Max 5MB</small>
             </div>
 
         </div>
@@ -116,7 +117,6 @@ $role = $_SESSION['role'];
         </div>
 
         </form>
-
     </div>
 
 </div>

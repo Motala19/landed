@@ -1,271 +1,195 @@
 <?php
 session_start();
+date_default_timezone_set('Africa/Johannesburg');
 
-// USER INFO
-$userName = "Motala Godfrey";
-$userRole = "admin";
-$currentDate = date("l, d F Y");
-$currentTime = date("H:i:s");
-
-// =====================
-// REQUISITIONS DATA
-// =====================
-$totalRequisitions = 2;
-$pendingRequisitions = 1;
-$approvedRequisitions = 1;
-$rejectedRequisitions = 0;
-
-$recentRequisitions = [
-    [
-        'number' => 'REQ-2026-0001',
-        'title' => 'Sports Equipment Purchase',
-        'department' => 'Sports',
-        'date' => '2026-03-16 10:25',
-        'status' => 'pending'
-    ],
-    [
-        'number' => 'REQ-2026-0002',
-        'title' => 'Maths Textbooks',
-        'department' => 'Academics',
-        'date' => '2026-03-15 09:10',
-        'status' => 'Approved'
-    ]
-];
-
-// =====================
-// QUOTATIONS DATA
-// =====================
-$totalQuotes = 2;
-$pendingQuotes = 1;
-$approvedQuotes = 1;
-$rejectedQuotes = 0;
-
-$recentQuotes = [
-    [
-        'quote_number' => 'QTE-2026-0001',
-        'title' => 'Soccer Kits',
-        'department' => 'Sports',
-        'date' => '2026-03-16 12:00',
-        'status' => 'pending'
-    ],
-    [
-        'quote_number' => 'QTE-2026-0002',
-        'title' => 'Science Equipment',
-        'department' => 'Academics',
-        'date' => '2026-03-15 11:00',
-        'status' => 'Approved'
-    ]
-];
-
-// STATUS BADGE
-function badgeClass($status) {
-    return match ($status) {
-        'Approved' => 'bg-success-subtle text-success',
-        'Rejected' => 'bg-danger-subtle text-danger',
-        'pending' => 'bg-warning-subtle text-warning-emphasis',
-        default => 'bg-secondary-subtle text-secondary'
-    };
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
 }
+
+// Only Admin can access
+if ($_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit;
+}
+
+$userName = $_SESSION['full_name'] ?? 'Admin';
+$role = $_SESSION['role'];
+$currentPage = basename($_SERVER['PHP_SELF']);
+
+include 'includes/db.php';
+
+// =====================
+// SUMMARY COUNTS
+// =====================
+$newCount = $conn->query("SELECT COUNT(*) as c FROM requisitions WHERE status='New'")->fetch_assoc()['c'];
+$pendingCount = $conn->query("SELECT COUNT(*) as c FROM requisitions WHERE status='Pending'")->fetch_assoc()['c'];
+$principalApproved = $conn->query("SELECT COUNT(*) as c FROM requisitions WHERE status='Principal Approved'")->fetch_assoc()['c'];
+$approvedCount = $conn->query("SELECT COUNT(*) as c FROM requisitions WHERE status IN ('Approved','Paid')")->fetch_assoc()['c'];
+$rejectedCount = $conn->query("SELECT COUNT(*) as c FROM requisitions WHERE status='Rejected'")->fetch_assoc()['c'];
+$totalUsers = $conn->query("SELECT COUNT(*) as c FROM users")->fetch_assoc()['c'];
+
+$currentDate = date("l, d F Y");
+$currentTime = date("H:i");
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Requisition System</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css"> <!-- YOUR CSS FILE -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body>
 
 <div class="container-fluid">
 <div class="row">
 
-<!-- SIDEBAR -->
-<div class="col-lg-2 p-0">
-    <aside class="sidebar">
-        <div class="brand-box text-center">
-    <img src="assets/images/logo.png" alt="School Logo" class="brand-logo">
+    <?php include 'includes/sidebar.php'; ?>
 
-    
+    <div class="col-lg-10 p-4">
 
-    <div class="brand-title mt-2">Midrand Primary</div>
-    <div class="brand-subtitle">Requisition System</div><br>
-</div>
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="mb-1">Admin Dashboard</h3>
+                <small class="text-muted"><?php echo $currentDate . " | " . $currentTime; ?></small>
+            </div>
 
-        <nav class="nav flex-column">
-            <a href="#" class="nav-link active">Dashboard</a>
-            <a href="requisitions.php" class="nav-link">Requisitions</a>
-            <a href="quotes.php" class="nav-link">Quotes</a>
-            <a href="#" class="nav-link">Finance</a>
-            <a href="#" class="nav-link">Logout</a>
-        </nav>
-    </aside>
-</div>
-
-<!-- MAIN CONTENT -->
-<div class="col-lg-10 p-0">
-
-<header class="topbar d-flex justify-content-between align-items-center">
-    <div>
-        <div class="page-title">Dashboard</div>
-        <div class="page-subtitle">Overview</div>
-    </div>
-
-    <div class="text-end">
-        <strong><?php echo $userName; ?></strong><br>
-        <small><?php echo $currentDate . " | " . $currentTime; ?></small><br>
-        <span class="role-badge"><?php echo $userRole; ?></span>
-    </div>
-</header>
-
-<main class="content-area">
-
-<!-- ===================== -->
-<!-- REQUISITIONS -->
-<!-- ===================== -->
-<h6 class="text-muted">Your Requisitions Overview</h6>
-
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-blue">
-            <div>Total</div>
-            <div class="stat-value"><?php echo $totalRequisitions; ?></div>
+            <div class="text-end">
+                <strong class="d-block fs-5"><?php echo htmlspecialchars($userName); ?></strong>
+                <small class="text-muted">Administrator</small>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-maroon">
-            <div>Pending</div>
-            <div class="stat-value"><?php echo $pendingRequisitions; ?></div>
+        <hr class="mb-4">
+
+        <!-- SUMMARY CARDS -->
+        <div class="row g-3 mb-5">
+            <div class="col-md-2">
+                <div class="card bg-primary text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0"><?php echo $newCount; ?></h3>
+                        <small>New</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-warning text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0"><?php echo $pendingCount; ?></h3>
+                        <small>Pending</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-info text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0"><?php echo $principalApproved; ?></h3>
+                        <small>Principal Approved</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-success text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0"><?php echo $approvedCount; ?></h3>
+                        <small>Approved / Paid</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-danger text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0"><?php echo $rejectedCount; ?></h3>
+                        <small>Rejected</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-dark text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0 text-white shadow-sm"><?php echo $totalUsers; ?></h3>
+                        <small>Total Users</small>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-green">
-            <div>Approved</div>
-            <div class="stat-value"><?php echo $approvedRequisitions; ?></div>
+        <!-- QUICK ACCESS TO ROLE DASHBOARDS -->
+        <h5 class="mb-3">Go to Role Dashboards</h5>
+
+        <div class="row g-4">
+            <!-- Finance -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-cash-stack display-4 text-primary mb-3"></i>
+                        <h5>Finance Dashboard</h5>
+                        <p class="text-muted">Verify new requisitions, manage payments and users</p>
+                        <a href="finance-dashboard.php" class="btn btn-primary">Open Finance</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Principal -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-badge display-4 text-warning mb-3"></i>
+                        <h5>Principal Dashboard</h5>
+                        <p class="text-muted">Review and approve requisitions</p>
+                        <a href="principal-dashboard.php" class="btn btn-warning">Open Principal</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treasurer -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-bank display-4 text-success mb-3"></i>
+                        <h5>Treasurer Dashboard</h5>
+                        <p class="text-muted">Final approval of requisitions</p>
+                        <a href="treasurer-dashboard.php" class="btn btn-success">Open Treasurer</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-red">
-            <div>Rejected</div>
-            <div class="stat-value"><?php echo $rejectedRequisitions; ?></div>
+        <!-- EXTRA ADMIN LINKS -->
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Manage Users</h5>
+                            <small class="text-muted">Create, reset or delete users</small>
+                        </div>
+                        <a href="manage-users.php" class="btn btn-outline-danger">Manage Users</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Audit Reports</h5>
+                            <small class="text-muted">View system activity log</small>
+                        </div>
+                        <a href="reports.php" class="btn btn-outline-dark">View Reports</a>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
-</div>
-
-<!-- REQUISITIONS TABLE -->
-<div class="card-box">
-    <div class="section-head">
-        <h5>Latest Requisitions</h5>
-    </div>
-
-    <div class="section-body">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Department</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php foreach ($recentRequisitions as $r): ?>
-                <tr>
-                    <td><?php echo $r['number']; ?></td>
-                    <td><?php echo $r['title']; ?></td>
-                    <td><?php echo $r['department']; ?></td>
-                    <td><?php echo $r['date']; ?></td>
-                    <td><span class="badge <?php echo badgeClass($r['status']); ?>"><?php echo $r['status']; ?></span></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- ===================== -->
-<!-- QUOTATIONS -->
-<!-- ===================== -->
-<h6 class="text-muted mt-4">Your Quotations Overview</h6>
-
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-purple">
-            <div>Total</div>
-            <div class="stat-value"><?php echo $totalQuotes; ?></div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-orange">
-            <div>Pending</div>
-            <div class="stat-value"><?php echo $pendingQuotes; ?></div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-teal">
-            <div>Approved</div>
-            <div class="stat-value"><?php echo $approvedQuotes; ?></div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card-box stat-card stat-accent-red">
-            <div>Rejected</div>
-            <div class="stat-value"><?php echo $rejectedQuotes; ?></div>
-        </div>
-    </div>
-</div>
-
-<!-- QUOTES TABLE -->
-<div class="card-box">
-    <div class="section-head">
-        <h5>Latest Quotations</h5>
-    </div>
-
-    <div class="section-body">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Quote #</th>
-                    <th>Title</th>
-                    <th>Department</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php foreach ($recentQuotes as $q): ?>
-                <tr>
-                    <td><?php echo $q['quote_number']; ?></td>
-                    <td><?php echo $q['title']; ?></td>
-                    <td><?php echo $q['department']; ?></td>
-                    <td><?php echo $q['date']; ?></td>
-                    <td><span class="badge <?php echo badgeClass($q['status']); ?>"><?php echo $q['status']; ?></span></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-</main>
-</div>
-
 </div>
 </div>
 
-<script src="assets/js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,7 +1,8 @@
 <?php
 session_start();
 include 'includes/db.php';
-include 'includes/audit_logger.php';   // ← Added
+include 'includes/audit_logger.php';
+include 'includes/notification.php';   // ← Added for email
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -35,7 +36,13 @@ if ($action == 'approve') {
 
     // Audit Log
     log_audit($user_id, $user_name, $role, 'Requisition Approved', $id, 'Final Approval by Treasurer');
-}
+
+    // Notify Finance (and optionally others)
+    send_email_notification("finance@midrandprimary.co.za", 
+        "Requisition Fully Approved by Treasurer", 
+        "A requisition has been fully approved.");
+
+} 
 
 if ($action == 'reject') {
 
@@ -50,6 +57,11 @@ if ($action == 'reject') {
 
     // Audit Log
     log_audit($user_id, $user_name, $role, 'Requisition Rejected', $id, "Reason: $reason");
+
+    // Notify Finance and Staff
+    send_email_notification("finance@midrandprimary.co.za", 
+        "Requisition Rejected by Treasurer", 
+        "Reason: $reason");
 }
 
 header("Location: treasurer-dashboard.php");

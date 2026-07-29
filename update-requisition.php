@@ -1,55 +1,93 @@
 <?php
+session_start();
 include 'includes/db.php';
 
-$id           = $_POST['id'];
-$action       = $_POST['action'] ?? 'update'; // 🔥 NEW
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
-$title        = $_POST['title'];
-$department   = $_POST['department'];
-$amount       = $_POST['amount'];
-$payment_type = $_POST['payment_type'];
-$payable_to   = $_POST['payable_to'];
-$description  = $_POST['description'];
+$id           = (int)($_POST['id'] ?? 0);
+$action       = $_POST['action'] ?? 'update';
+$title        = trim($_POST['title'] ?? '');
+$department   = trim($_POST['department'] ?? '');
+$amount       = (float)($_POST['amount'] ?? 0);
+$payment_type = trim($_POST['payment_type'] ?? '');
+$payable_to   = trim($_POST['payable_to'] ?? '');
+$description  = trim($_POST['description'] ?? '');
 
-// HANDLE FILE UPDATE
+if ($id === 0) {
+    header("Location: requisitions.php");
+    exit;
+}
+
+// Handle file upload safely
+$documentName = null;
+
 if (!empty($_FILES['document']['name'])) {
-    $documentName = time() . "_" . $_FILES['document']['name'];
-    move_uploaded_file($_FILES['document']['tmp_name'], "uploads/" . $documentName);
+    // Basic size check
+    if ($_FILES['document']['size'] > 5 * 1024 * 1024) {
+        die("File too large. Max 5MB.");
+    }
 
-    $sql = "UPDATE requisitions SET
-        title='$title',
-        department='$department',
-        amount='$amount',
-        payment_type='$payment_type',
-        payable_to='$payable_to',
-        description='$description',
-        document='$documentName'
-        WHERE id=$id";
+    $year = date("Y");
+    $month = date("m");
+    $uploadPath = "uploads/$year/$month/";
+
+    if (!is_dir($uploadPath)) {
+        mkdir($uploadPath, 0755, true);
+    }
+
+    $fileName = time() . "_" . basename($_FILES['document']['name']);
+    $fullPath = $uploadPath . $fileName;
+
+    if (move_uploaded_file($_FILES['document']['tmp_name'], $fullPath)) {
+        $documentName = "$year/$month/$fileName";
+    }
+}
+
+// Update with prepared statement
+if ($documentName) {
+    $stmt = $conn->prepare("
+        UPDATE requisitions SET
+            title = ?,
+            department = ?,
+            amount = ?,
+            payment_type = ?,
+            payable_to = ?,
+            description = ?,
+            document = ?
+        WHERE id = ?
+    ");
+    $stmt->bind_param("ssdssssi", $title, $department, $amount, $payment_type, $payable_to, $description, $documentName, $id);
 } else {
-    $sql = "UPDATE requisitions SET
-        title='$title',
-        department='$department',
-        amount='$amount',
-        payment_type='$payment_type',
-        payable_to='$payable_to',
-        description='$description'
-        WHERE id=$id";
+    $stmt = $conn->prepare("
+        UPDATE requisitions SET
+            title = ?,
+            department = ?,
+            amount = ?,
+            payment_type = ?,
+            payable_to = ?,
+            description = ?
+        WHERE id = ?
+    ");
+    $stmt->bind_param("ssdsssi", $title, $department, $amount, $payment_type, $payable_to, $description, $id);
 }
 
-$conn->query($sql);
+$stmt->execute();
 
-
-// 🔥 RESUBMIT LOGIC (THIS IS THE MAGIC)
-if ($action == 'resubmit') {
-
-    $conn->query("UPDATE requisitions SET
-        status='new',
-        rejection_reason=NULL,
-        action_by='Staff'
-    WHERE id=$id");
-
+// Resubmit logic
+if ($action === 'resubmit') {
+    $stmt2 = $conn->prepare("
+        UPDATE requisitions SET
+            status = 'New',
+            rejection_reason = NULL,
+            action_by = 'Staff'
+        WHERE id = ?
+    ");
+    $stmt2->bind_param("i", $id);
+    $stmt2->execute();
 }
-
 
 header("Location: requisitions.php");
 exit;

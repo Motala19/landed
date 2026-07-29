@@ -1,14 +1,31 @@
 <?php 
 session_start();
-$userName = "Finance User";
-
 include 'includes/db.php';
 
-$id = $_GET['id'] ?? 0;
-$type = $_GET['type'] ?? '';
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
 
-$result = $conn->query("SELECT * FROM requisitions WHERE id = $id");
+$userName = $_SESSION['full_name'] ?? 'User';
+$id = (int)($_GET['id'] ?? 0);
+$type = $_GET['type'] ?? '';
+$from = $_GET['from'] ?? 'finance';
+
+if ($id === 0) {
+    header("Location: requisitions.php");
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT * FROM requisitions WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
 $requisition = $result->fetch_assoc();
+
+if (!$requisition) {
+    die("Requisition not found.");
+}
 ?>
 
 <!DOCTYPE html>
