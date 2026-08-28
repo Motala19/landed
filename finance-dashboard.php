@@ -579,6 +579,13 @@ target="_blank">
 PDF
 </a>
 
+<?php if ($r['status'] == 'Paid' && !empty($r['invoice'])): ?>
+    <a href="uploads/<?php echo htmlspecialchars($r['invoice']); ?>"
+       class="btn btn-sm btn-success" target="_blank">
+        Invoice
+    </a>
+<?php endif; ?>
+
 </td>
 
 </tr>
@@ -696,7 +703,7 @@ while($r = $result->fetch_assoc()):
 <td><?php echo $r['department']; ?></td>
 <td><?php echo $r['created_by']; ?></td>
 <td><?php echo date("d M Y H:i", strtotime($r['created_at'])); ?></td>
-<td><?php echo $r['rejected_by'] ?? 'Unknown'; ?></td>
+<td><?php echo $r['action_by'] ?? 'Unknown'; ?></td>
 
 <td>
 

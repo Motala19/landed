@@ -240,26 +240,21 @@ You have not created any requisitions yet.
 
 <td>
 
-<?php if($r['status'] != 'Rejected'): ?>
-
-<a href="view-requisition.php?id=<?php echo $r['id']; ?>"
-class="btn btn-sm btn-primary">
-View
+<!-- Always show View -->
+<a href="view-requisition.php?id=<?php echo $r['id']; ?>&from=requisitions"
+   class="btn btn-sm btn-primary">
+    View
 </a>
 
-<?php endif; ?>
-
+<!-- Show Edit only if Rejected -->
 <?php if($r['status'] == 'Rejected'): ?>
-
-<a href="edit-requisition.php?id=<?php echo $r['id']; ?>"
-class="btn btn-sm btn-warning">
-Edit
-</a>
-
-
-
+    <a href="edit-requisition.php?id=<?php echo $r['id']; ?>"
+       class="btn btn-sm btn-warning">
+        Edit
+    </a>
 <?php endif; ?>
 
+<!-- Show POP if Paid -->
 <?php if ($r['status'] == 'Paid' && !empty($r['payment_proof'])): ?>
     <a href="uploads/<?php echo $r['payment_proof']; ?>" 
        class="btn btn-sm btn-info" target="_blank">
@@ -267,13 +262,30 @@ Edit
     </a>
 <?php endif; ?>
 
+<!-- Always show Delete -->
 <a href="staff-delete.php?id=<?php echo $r['id']; ?>"
-class="btn btn-sm btn-danger"
-onclick="return confirm('Are you sure you want to delete this requisition?')">
-
-Delete
-
+   class="btn btn-sm btn-danger"
+   onclick="return confirm('Are you sure you want to delete this requisition?')">
+    Delete
 </a>
+<!-- Upload Invoice (only if Paid and no invoice yet) -->
+<?php if ($r['status'] == 'Paid' && empty($r['invoice'])): ?>
+    <a href="upload-invoice.php?id=<?php echo $r['id']; ?>"
+       class="btn btn-sm btn-warning">
+        Upload Invoice
+    </a>
+<?php endif; ?>
+
+<!-- View Invoice (after uploaded) -->
+<?php if ($r['status'] == 'Paid' && !empty($r['invoice'])): ?>
+    <a href="uploads/<?php echo htmlspecialchars($r['invoice']); ?>"
+       class="btn btn-sm btn-success" target="_blank">
+        View Invoice
+    </a>
+<?php endif; ?>
+
+
+
 
 </td>
 

@@ -43,8 +43,8 @@ if (!$req) {
 
                 <div class="mb-3">
                     <label class="form-label"><strong>Upload Proof of Payment</strong></label>
-                    <input type="file" name="payment_proof" class="form-control" required>
-                    <small class="text-muted">Upload receipt, bank statement, or proof (PDF, Image)</small>
+                    <input type="file" name="payment_proof" class="form-control">
+                    <small class="text-muted">Optional – upload Proof of Payment if available</small>
                 </div>
 
                 <button type="submit" class="btn btn-success">Mark as Paid</button>

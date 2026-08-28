@@ -37,6 +37,7 @@ $requisition = $result->fetch_assoc();
 if (!$requisition) {
     die("Requisition not found.");
 }
+
 ?>
 
 <!DOCTYPE html>

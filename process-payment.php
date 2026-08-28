@@ -59,7 +59,8 @@ $paid_by = $_SESSION['full_name'] ?? 'System';
 $stmt->bind_param("ssi", $proofToStore, $paid_by, $id);
 $stmt->execute();
 
-log_audit($_SESSION['user_id'], $_SESSION['full_name'] ?? 'User', $_SESSION['role'], 'Payment Made', $id, "Proof uploaded");
+$auditDetail = $proofToStore ? "Proof of payment uploaded" : "Marked as paid without proof of payment";
+log_audit($_SESSION['user_id'], $_SESSION['full_name'] ?? 'User', $_SESSION['role'], 'Payment Made', $id, $auditDetail);
 
 header("Location: finance-dashboard.php?success=paid");
 exit;

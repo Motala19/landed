@@ -2,6 +2,7 @@
 session_start();
 include 'includes/db.php';
 include 'includes/audit_logger.php';   // ← Added
+include 'includes/notification.php'; // ← Added
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -37,6 +38,13 @@ if ($action == 'verify') {
 
     // Audit Log
     log_audit($user_id, $user_name, $role, 'Requisition Verified', $id, "Budget Status: $budget");
+
+    // Notify Principal
+$subject = "Requisition Ready for Principal Review";
+$message = "A requisition has been verified by Finance and is waiting for your review.<br><br>";
+$message .= "Please log in to the Principal Dashboard to action it.";
+
+send_email_notification("munyadziwa@midrandprimary.co.za", $subject, $message);
 
     header("Location: finance-dashboard.php?success=verified");
     exit;

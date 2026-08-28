@@ -13,11 +13,16 @@ function send_notification($user_id, $title, $message, $type = 'info', $requisit
     $stmt->execute();
 }
 
-// Optional: Send email too
 function send_email_notification($email, $subject, $message) {
-    $headers = "From: no-reply@midrandprimary.co.za\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    
-    mail($email, $subject, $message, $headers);
+    $from = "no-reply@midrandprimary.co.za";
+
+    $headers  = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+    $headers .= "From: Midrand Primary <$from>\r\n";
+    $headers .= "Reply-To: $from\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion();
+
+    // 5th parameter helps on many hosts
+    return mail($email, $subject, $message, $headers, "-f$from");
 }
 ?>

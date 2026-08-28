@@ -27,16 +27,19 @@ if (empty($title) || empty($department) || $amount <= 0 || empty($payment_type) 
     exit;
 }
 
-// FILE UPLOAD - Organized by Year/Month + 5MB limit + Store full relative path
+// FILE UPLOAD - Organized by Year/Month + 5MB limit + Duplicate check
 $documentName = '';
+$documentHash = '';
 
 if (!empty($_FILES['document']['name'])) {
+
+    // Size check
     if ($_FILES['document']['size'] > 5 * 1024 * 1024) {
         header("Location: create_requisition.php?error=File is too large. Maximum size is 5MB.");
         exit;
     }
 
-    // Optional: Basic file type check
+    // File type check
     $allowed = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
     $ext = strtolower(pathinfo($_FILES['document']['name'], PATHINFO_EXTENSION));
     if (!in_array($ext, $allowed)) {
@@ -44,6 +47,23 @@ if (!empty($_FILES['document']['name'])) {
         exit;
     }
 
+    // Calculate file hash (fingerprint)
+    $documentHash = hash_file('sha256', $_FILES['document']['tmp_name']);
+
+    // Check if this exact file was already uploaded
+    $check = $conn->prepare("SELECT id, requisition_number FROM requisitions WHERE document_hash = ? LIMIT 1");
+    $check->bind_param("s", $documentHash);
+    $check->execute();
+    $existing = $check->get_result()->fetch_assoc();
+
+    if ($existing) {
+        header("Location: create_requisition.php?error=" . urlencode(
+            "This document was already used on requisition " . $existing['requisition_number']
+        ));
+        exit;
+    }
+
+    // Save file
     $year = date("Y");
     $month = date("m");
     $uploadPath = "uploads/$year/$month/";
@@ -84,15 +104,15 @@ try {
 
     $reqNumber = "REQ-$year-" . str_pad($newNumber, 4, "0", STR_PAD_LEFT);
 
-    // PREPARED STATEMENT INSERT
+    // PREPARED STATEMENT INSERT (with document_hash)
     $stmt = $conn->prepare("
         INSERT INTO requisitions 
-        (requisition_number, title, department, amount, payment_type, payable_to, description, document, created_by, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'New')
+        (requisition_number, title, department, amount, payment_type, payable_to, description, document, document_hash, created_by, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'New')
     ");
 
     $stmt->bind_param(
-        "sssdsssss",
+        "sssdssssss",
         $reqNumber,
         $title,
         $department,
@@ -101,6 +121,7 @@ try {
         $payable_to,
         $description,
         $documentName,
+        $documentHash,
         $user_name
     );
 
@@ -129,7 +150,7 @@ try {
     $message .= "Amount: R" . number_format($amount, 2) . "<br>";
     $message .= "Please review it in the Finance Dashboard.";
 
-    send_email_notification("mogalemg@midrandprimary.co.za", $subject, $message);
+    send_email_notification("confidence@midrandprimary.co.za", $subject, $message);
 
     header("Location: requisitions.php?success=created");
     exit;

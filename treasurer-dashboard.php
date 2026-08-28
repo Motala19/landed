@@ -78,11 +78,11 @@ $approvedStart = ($approvedPage - 1) * $limit;
 
 $approvedTotal = $conn->query("
 SELECT COUNT(*) as total FROM requisitions 
-WHERE status='Approved' 
+WHERE status IN ('Approved', 'Paid') 
 AND deleted_by_treasurer = 0
 ")->fetch_assoc()['total'];
 
-$approvedPages = ceil($approvedTotal / $limit);
+$approvedPages = max(1, ceil($approvedTotal / $limit));
 
 // REJECTED
 $rejectedPage = isset($_GET['rejected_page']) ? (int)$_GET['rejected_page'] : 1;
@@ -420,6 +420,7 @@ onchange="this.form.submit()">
 <th>Number</th>
 <th>Title</th>
 <th>Department</th>
+<th>Amount</th>
 <th>Created By</th>
 <th>Date</th>
 <th>Action</th>
@@ -445,6 +446,7 @@ while($r = $result->fetch_assoc()):
 <td><?php echo $r['requisition_number']; ?></td>
 <td><?php echo $r['title']; ?></td>
 <td><?php echo $r['department']; ?></td>
+<td>R<?php echo number_format($r['amount'], 2); ?></td>
 <td><?php echo $r['created_by']; ?></td>
 <td><?php echo date("d M Y H:i", strtotime($r['created_at'])); ?></td>
 

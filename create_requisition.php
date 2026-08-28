@@ -70,7 +70,7 @@ $error = $_GET['error'] ?? '';
             <!-- AMOUNT -->
             <div class="col-md-6 mb-3">
                 <label class="form-label"><strong>Amount (R)</strong></label>
-                <input type="number" class="form-control" name="amount" placeholder="Enter amount in Rands" min="0" required>
+                <input type="number" class="form-control" name="amount" placeholder="Enter amount in Rands" min="0" step="any" required>
             </div>
 
             <!-- PAYMENT TYPE -->

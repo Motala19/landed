@@ -80,14 +80,15 @@ WHERE status='Principal Approved' AND deleted_by_principal = 0
 ")->fetch_assoc()['total'];
 $pendingPages = ceil($pendingTotal / $limit);
 
+
 // APPROVED
 $approvedPage = isset($_GET['approved_page']) ? (int)$_GET['approved_page'] : 1;
 $approvedStart = ($approvedPage - 1) * $limit;
 $approvedTotal = $conn->query("
 SELECT COUNT(*) as total FROM requisitions 
-WHERE status='Approved' AND deleted_by_principal = 0
+WHERE status IN ('Approved', 'Paid') AND deleted_by_principal = 0
 ")->fetch_assoc()['total'];
-$approvedPages = ceil($approvedTotal / $limit);
+$approvedPages = max(1, ceil($approvedTotal / $limit));
 
 // REJECTED
 $rejectedPage = isset($_GET['rejected_page']) ? (int)$_GET['rejected_page'] : 1;
