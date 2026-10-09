@@ -284,7 +284,15 @@ You have not created any requisitions yet.
     </a>
 <?php endif; ?>
 
-
+<?php if (
+    empty($r['document'])
+    && !in_array($r['status'], ['Approved', 'Paid', 'Rejected'])
+): ?>
+    <a href="upload-document.php?id=<?php echo (int)$r['id']; ?>"
+       class="btn btn-sm btn-outline-primary">
+        Upload Document
+    </a>
+<?php endif; ?>
 
 
 </td>

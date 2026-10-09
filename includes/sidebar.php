@@ -108,7 +108,7 @@ $role = $_SESSION['role'] ?? '';
                 <a href="reports.php" 
                    class="nav-link d-flex align-items-center px-2 py-2 <?= ($currentPage == 'reports.php') ? 'active' : '' ?>">
                     <i class="fa-solid fa-chart-line me-2"></i> 
-                    <span>Reports</span>
+                    <span>Reports / Budgets</span>
                 </a>
             </li>
 
