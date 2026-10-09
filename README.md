@@ -108,3 +108,15 @@ The system reduces paper tracking, improves accountability, and supports school 
 │   ├── css/style.css
 │   └── images/
 └── uploads/                   # Documents, POP, invoices (not in git)
+
+## Author
+
+**Motala Godfrey Mogale**  
+Built for real school use — requisitions, multi-stage approvals, payments, and department budgets.
+
+### Contact
+
+- **Email:** [tshepisogodfrey@gmail.com](mailto:tshepisogodfrey@gmail.com)  
+- **Phone:** 065 984 7909  
+
+Open to **junior** or **mid-level** developer opportunities (PHP, MySQL, web applications).
